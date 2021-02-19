@@ -19,3 +19,9 @@ kernel : $(cfiles)
 
 bootloader : $(BOOTLOADER)
 	nasm -felf32 src/boot.asm -o build/boot.o
+
+clean:
+	rm build/*.o
+
+mrproper:
+	rm build/*
