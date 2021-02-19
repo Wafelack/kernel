@@ -1,4 +1,3 @@
-#include <stddef.h>
 #include "include/vga.h"
 
 void
