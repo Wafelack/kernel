@@ -14,11 +14,14 @@ verify : link
 link : kernel bootloader
 	$(CC) -T $(LINKER) -o $(BINARY) -ffreestanding -O2 -nostdlib build/boot.o $(cobjects) -lgcc
 
-kernel : $(cfiles)
+kernel : create_dir $(cfiles)
 	$(CC) -c $(cfiles) -o $(cobjects) $(CFLAGS)
 
-bootloader : $(BOOTLOADER)
+bootloader : create_dir $(BOOTLOADER)
 	nasm -felf32 src/boot.asm -o build/boot.o
+
+create_dir:
+	mkdir -p build
 
 clean:
 	rm build/*.o
