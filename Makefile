@@ -3,25 +3,25 @@ CFLAGS=-std=gnu99 -ffreestanding -O2 -Wall -Wextra
 BOOTLOADER=src/boot.asm
 LINKER=src/linker.ld
 BINARY=build/kernel.bin
+SRC=src/
+BUILD=build/
 
-cfiles=$(wildcard src/*.c)
-cobjects=$(patsubst src%,build%,$(patsubst %c,%o,$(wildcard src/*.c)))
+cfiles=$(wildcard $(SRC)/*.c)
+cobjects=$(patsubst $(SRC)%,$(BUILD)%,$(patsubst %c,%o,$(wildcard src/*.c)))
 
 run : verify
 	qemu-system-i386 -kernel build/kernel.bin
 verify : link
 	grub-file --is-x86-multiboot $(BINARY)
-link : kernel bootloader
+link : $(cobjects) bootloader
 	$(CC) -T $(LINKER) -o $(BINARY) -ffreestanding -O2 -nostdlib build/boot.o $(cobjects) -lgcc
 
-kernel : create_dir $(cfiles)
-	$(CC) -c $(cfiles) -o $(cobjects) $(CFLAGS)
+$(cobjects) : $(cfiles)
+	$(CC) -c $(SRC)/main.c -o $(BUILD)/main.o $(CFLAGS)
+	$(CC) -c $(SRC)/vga.c -o $(BUILD)/vga.o $(CFLAGS)
 
-bootloader : create_dir $(BOOTLOADER)
+bootloader : $(BOOTLOADER)
 	nasm -felf32 src/boot.asm -o build/boot.o
-
-create_dir:
-	mkdir -p build
 
 clean:
 	rm build/*.o
