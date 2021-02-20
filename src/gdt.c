@@ -1,8 +1,10 @@
-#include "gdt.h"
+#include "tables/gdt.h"
+#include "drivers/vga.h"
 
 void
-encodeEntry(uint8_t* target, uint32_t limit, uint32_t base, uint8_t type)
+gdt_entry(uint8_t* target, uint32_t limit, uint32_t base, uint8_t type)
 {
+
     if ((limit > 65536) && ((limit & 0XFFF) != 0xFFF))
     {
         return;

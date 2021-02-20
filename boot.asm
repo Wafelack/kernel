@@ -1,3 +1,4 @@
+         bits 32
 MBALIGN  equ 1 << 0            ; align loaded modules
 MEMINFO  equ 1 << 1            ; memory map
 FLAGS    equ MBALIGN | MEMINFO ; Multiboot flags
@@ -17,15 +18,16 @@ resb 16384 ; 16 KiB
 stack_top:
 
 section .text
+extern kernel_main
 global _start:function (_start.end - _start)
 _start:
-
+       cli
        mov esp, stack_top ; initialize esp to top of stack
-
-       extern kernel_main
+       
        call kernel_main
 
-       cli ; Disable interrupts
+       
+       
 .hang: hlt
        jmp .hang
 .end:

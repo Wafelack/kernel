@@ -1,8 +1,9 @@
 #ifndef _VGA_H_
 #define _VGA_H_
 
-#include <stdint.h>
-#include <stddef.h>
+#include "../utils/includes.h"
+
+#define BUFFER_ADDR 0xB8000
 
 typedef enum {
     BLACK = 0,
@@ -39,9 +40,7 @@ make_color(Color fg, Color bg);
 uint8_t 
 make_entry(uint8_t color, unsigned char character);
 
-// Writer functiosn
-WRITER 
-writer_init(void);
+// Writer functions
 uint16_t 
 make_char(uint8_t color, unsigned char character);
 void 
@@ -53,5 +52,7 @@ vga_writeln(WRITER* writer, const char *word);
 
 void
 clear_screen(WRITER *writer);
+
+#define PRINT(x) vga_write(&writer, x) // Todo: write a printf.
 
 #endif

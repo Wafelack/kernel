@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "C++ Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/build/kernel.bin",
+            "miDebuggerServerAddress": "localhost:9000",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}",
+            "environment": [],
+            "externalConsole": true,
+            "launchCompleteCommand": "exec-run",
+            "linux": {
+                "MIMode": "gdb",
+                // "miDebuggerPath": "C:\\Program Files (x86)\\GNU Tools ARM Embedded\\8 2018-q4-major\\bin\\arm-none-eabi-gdb.exe"
+            }
+        }
+    ]
+}

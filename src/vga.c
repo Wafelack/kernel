@@ -1,4 +1,4 @@
-#include "vga.h"
+#include "drivers/vga.h"
 
 uint8_t 
 make_color(Color fg, Color bg)
@@ -19,21 +19,6 @@ clear_screen(WRITER *writer) {
     }
     writer->column = 0;
     writer->row = 0;
-}
-
-WRITER 
-writer_init(void) 
-{
-    uint8_t color = make_color(LIGHT_GRAY, BLACK);
-    uint16_t *buffer = (uint16_t*) 0xB8000;
-    WRITER writer = {
-        0,
-        0,
-        color,
-        buffer,
-    };
-    clear_screen(&writer);
-    return writer;
 }
 
 void 
@@ -71,3 +56,10 @@ vga_write(WRITER* writer, const char *word)
 
     }
 }
+
+WRITER writer = {
+    0,
+    0,
+    LIGHT_GRAY | BLACK << 4,
+    (uint16_t*)BUFFER_ADDR
+};
