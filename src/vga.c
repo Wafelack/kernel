@@ -1,4 +1,5 @@
 #include "drivers/vga.h"
+#include "utils/utils.h"
 
 uint8_t 
 make_color(Color fg, Color bg)
@@ -27,6 +28,13 @@ writer_setcolor(WRITER* writer, uint8_t color)
     writer->color = color;
 }
 
+static void
+scroll(WRITER *writer)
+{
+  memmove(writer->buffer, writer->buffer + WIDTH, WIDTH * HEIGHT - WIDTH);
+  memset(writer->buffer + (WIDTH * HEIGHT - WIDTH), make_char(make_color(LIGHT_GRAY, BLACK), ' '), WIDTH);
+}
+
 void
 vga_write(WRITER* writer, const char *word)
 {
@@ -49,7 +57,7 @@ vga_write(WRITER* writer, const char *word)
         }
 
         if (writer->row >= HEIGHT) {
-            clear_screen(writer); // TODO: Implement scrolling
+            scroll(writer);
         }
         
 

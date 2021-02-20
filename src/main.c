@@ -7,6 +7,9 @@ extern WRITER writer;
 static void
 init_gdt(void);
 
+static void
+tests(void);
+
 void
 kernel_main(void) 
 {
@@ -18,8 +21,18 @@ kernel_main(void)
 
     OK("Initialized Global Descriptor Table.");
 
-    assert(1 != 1, "This is an assertion that will fail.");
+    tests();
 
+    #if 0
+    for (uint8_t i = 0; i < 255; i++) {
+      char buffer[7] = {};
+      itoa(buffer, (int32_t)i);
+      PRINT(buffer);
+      PRINT("\n");
+    }
+    #endif
+
+    
     while (1);
 }
 
@@ -30,4 +43,26 @@ init_gdt(void)
     gdt_entry(GDT[0], 0, 0, 0);
     gdt_entry(GDT[1], 0xffffffff, 0, 0x9A);
     gdt_entry(GDT[2], 0xffffffff, 0, 0x92);
+}
+
+static void
+tests(void)
+{
+    PRINT("\nRunning tests ...\n\n");
+
+    // Memmove
+    char dest[2] = {2, 3};
+    char src[2]  = {5, 7};
+    memmove(dest, src, 2);
+    assert(dest[1] == 7 && dest[0] == 5, "Failed to move data.");
+
+    SUCCESS_TEST("memmove");
+
+    // Failing test
+    assert(1 != 1, "This assertion should fail.");
+
+    SUCCESS_TEST("should_fail");
+
+    PRINT("\n"); 
+    OK("Sucessfully passed all tests.");
 }

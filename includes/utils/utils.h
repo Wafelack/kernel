@@ -5,10 +5,16 @@
 #define ENABLE_INTERRUPTS() asm volatile ("sti");
 #define DISABLE_INTERRUPTS() asm volatile ("cli");
 
+#define SET_COLOR(color) writer_setcolor(&writer, make_color(color, BLACK));
+
 #define PANIC(comment) { \
     DISABLE_INTERRUPTS()\
     PRINT("\n");\
-    writer_setcolor(&writer, make_color(LIGHT_GRAY, BLACK));\
+    SET_COLOR(LIGHT_GRAY);\
+    PRINT("Please keep kalm, don't ");\
+    SET_COLOR(RED);\
+    PRINT("PANIK !\n");\
+    SET_COLOR(LIGHT_GRAY);\
     PRINT(__FILE__);\
     PRINT(":");\
     char buffer[7] = {0};\
@@ -25,14 +31,23 @@
         PANIC("Assertion failed: `" #expr "`: " message);\
 }
 
+
 #define OK(message) {\
   PRINT("[");\
-  writer_setcolor(&writer, make_color(GREEN, BLACK));\
+  SET_COLOR(GREEN);\
   PRINT(" OK ");\
-  writer_setcolor(&writer, make_color(LIGHT_GRAY, BLACK));\
+  SET_COLOR(LIGHT_GRAY);\
   PRINT("] ");\
   PRINT(message);\
   PRINT("\n");\
+}
+
+
+#define SUCCESS_TEST(test_name) {\
+  PRINT("test::" test_name "... ");\
+  SET_COLOR(GREEN);\
+  PRINT("ok\n");\
+  SET_COLOR(LIGHT_GRAY);\
 }
 
 #include "includes.h"
