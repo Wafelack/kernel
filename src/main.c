@@ -4,22 +4,30 @@
 
 extern WRITER writer;
 
+static void
+init_gdt(void);
+
 void
 kernel_main(void) 
 {
-    uint8_t GDT[3][8] = {};
+    clear_screen(&writer);
 
+    OK("Initialized VGA buffer.");
+
+    init_gdt();
+
+    OK("Initialized Global Descriptor Table.");
+
+    assert(1 != 1, "This is an assertion that will fail.");
+
+    while (1);
+}
+
+static void
+init_gdt(void)
+{
+    uint8_t GDT[3][8] = {};
     gdt_entry(GDT[0], 0, 0, 0);
     gdt_entry(GDT[1], 0xffffffff, 0, 0x9A);
     gdt_entry(GDT[2], 0xffffffff, 0, 0x92);
-
-    clear_screen(&writer);
-    PRINT("Hello, World !\n");
-
-    writer_setcolor(&writer, make_color(GREEN, BLACK));
-    PRINT("Hello from the Matrix !");
-
-    PANIC("This is a panic test.");
-
-    while (1);
 }

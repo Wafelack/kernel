@@ -20,6 +20,21 @@
     while (1);\
 }
 
+#define assert(expr, message) {\
+    if (!(expr))\
+        PANIC("Assertion failed: `" #expr "`: " message);\
+}
+
+#define OK(message) {\
+  PRINT("[");\
+  writer_setcolor(&writer, make_color(GREEN, BLACK));\
+  PRINT(" OK ");\
+  writer_setcolor(&writer, make_color(LIGHT_GRAY, BLACK));\
+  PRINT("] ");\
+  PRINT(message);\
+  PRINT("\n");\
+}
+
 #include "includes.h"
 
 #if 0

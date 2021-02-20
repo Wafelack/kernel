@@ -36,16 +36,15 @@ vga_write(WRITER* writer, const char *word)
         if (word[i] == '\n') {
             writer->row++;
             writer->column = 0;
+            i++;
+            continue;
         }
 
         writer->buffer[writer->row * WIDTH + writer->column++] = make_char(writer->color, word[i++]);
 
-        if (word[i - 1] == '\n') {
-            writer->column = 0; // hide \n character
-        } 
-
         if (writer->column >= WIDTH)
         {
+            writer->row++;
             writer->column = 0;
         }
 

@@ -12,6 +12,9 @@ LINKER=./linker.ld
 BINARY=./build/kernel.bin
 
 all : verify
+	qemu-system-i386 -kernel $(BINARY)
+
+debug : verify
 	qemu-system-i386 -S -gdb tcp::9000 -kernel $(BINARY) -no-reboot -monitor stdio -display sdl -vga std
 
 verify : link

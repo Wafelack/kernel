@@ -1,5 +1,8 @@
 #include "tables/gdt.h"
 #include "drivers/vga.h"
+#include "utils/utils.h"
+
+extern WRITER writer;
 
 void
 gdt_entry(uint8_t* target, uint32_t limit, uint32_t base, uint8_t type)
@@ -7,6 +10,7 @@ gdt_entry(uint8_t* target, uint32_t limit, uint32_t base, uint8_t type)
 
     if ((limit > 65536) && ((limit & 0XFFF) != 0xFFF))
     {
+        PANIC("This is not possible !");
         return;
     }
 
