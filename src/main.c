@@ -1,9 +1,15 @@
-#include "include/vga.h"
-#include "include/gdt.h"
+#include "drivers/vga.h"
+#include "tables/gdt.h"
+
+
 
 void
 kernel_main(void) 
 {
+    WRITER writer = writer_init();
+    #define PRINT(x) vga_write(&writer, x) // Todo: write a printf.
+    
+
     uint8_t null_descriptor[8] = {};
     uint8_t code_descriptor[8] = {};
     uint8_t data_descriptor[8] = {};
@@ -17,6 +23,7 @@ kernel_main(void)
         data_descriptor
     };
 
-    WRITER writer = writer_init();
-    vga_write(&writer, "Hello, World !\n");
+    
+    PRINT("Hello, World !\n");
+    PRINT("Hello from the Matrix !");
 }

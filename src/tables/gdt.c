@@ -1,4 +1,4 @@
-#include "include/gdt.h"
+#include "gdt.h"
 
 void
 encodeEntry(uint8_t* target, uint32_t limit, uint32_t base, uint8_t type)

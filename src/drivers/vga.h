@@ -42,12 +42,14 @@ make_entry(uint8_t color, unsigned char character);
 // Writer functiosn
 WRITER 
 writer_init(void);
-uint8_t 
+uint16_t 
 make_char(uint8_t color, unsigned char character);
 void 
 writer_setcolor(WRITER* writer, uint8_t color);
 void
 vga_write(WRITER* writer, const char *word);
+void
+vga_writeln(WRITER* writer, const char *word);
 
 void
 clear_screen(WRITER *writer);
