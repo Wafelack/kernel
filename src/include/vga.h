@@ -31,7 +31,7 @@ typedef struct {
     size_t column;
     uint8_t color;
     uint16_t* buffer;
-} Writer;
+} WRITER;
 
 // Color functions
 uint8_t 
@@ -40,19 +40,16 @@ uint8_t
 make_entry(uint8_t color, unsigned char character);
 
 // Writer functiosn
-Writer 
+WRITER 
 writer_init(void);
 uint8_t 
 make_char(uint8_t color, unsigned char character);
 void 
-writer_setcolor(Writer* writer, uint8_t color);
-void 
-_writer_putat(Writer* writer, unsigned char c, uint8_t color, size_t x, size_t y);
-void 
-_writer_put(Writer *writer, char c);
+writer_setcolor(WRITER* writer, uint8_t color);
 void
-_writer_write(Writer *writer, const char *s, size_t size);
+vga_write(WRITER* writer, const char *word);
+
 void
-writer_writes(Writer *writer, const char *s);
+clear_screen(WRITER *writer);
 
 #endif
