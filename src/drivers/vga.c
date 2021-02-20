@@ -57,7 +57,7 @@ vga_write(WRITER* writer, const char *word)
 
         if (word[i - 1] == '\n') {
             writer->column = 0; // hide \n character
-        }
+        } 
 
         if (writer->column >= WIDTH)
         {
