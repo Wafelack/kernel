@@ -1,7 +1,7 @@
-CC=gcc
-CFLAGS=-m32 -std=gnu99 -ffreestanding -fno-stack-protector -I "./includes/" -g -Wall -Wextra -Werror  -nostdlib
+CC=i686-elf-gcc
+CFLAGS=-std=gnu99 -ffreestanding -fno-stack-protector -I "./includes/" -g -Wall -Wextra -Werror
 ASMFLAGS=-f elf32 -F dwarf
-LDFLAGS=-I "./includes/" -m elf_i386
+LDFLAGS=-I "./includes/" -lgcc -nostdlib
 
 OBJECTS=build
 COBJECTS=$(patsubst src%, build%, $(patsubst %.c, %.o, $(wildcard src/*.c)))
@@ -22,7 +22,7 @@ verify : link
 	grub-file --is-x86-multiboot $(BINARY)
 
 link : $(COBJECTS) $(CORE)
-	ld -T $(LINKER) -o $(BINARY) $(CORE) build/gdt_asm.o $(COBJECTS) $(LDFLAGS)
+	$(CC) -T $(LINKER) -o $(BINARY) $(CORE) build/gdt_asm.o $(COBJECTS) $(LDFLAGS)
 
 $(OBJECTS)/%.o : src/%.c _recompile
 	$(CC) -c $< -o $@ $(CFLAGS)
