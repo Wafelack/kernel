@@ -3,6 +3,7 @@
 #include "utils/utils.h"
 
 extern WRITER writer;
+extern int set_gdt(void);
 
 void
 gdt_entry(uint8_t* target, uint32_t limit, uint32_t base, uint8_t type)
@@ -32,4 +33,19 @@ gdt_entry(uint8_t* target, uint32_t limit, uint32_t base, uint8_t type)
     target[7] = (base >> 24) & 0xFF;
 
     target[5] = type;
+}
+
+void
+init_gdt(void)
+{
+    uint8_t GDT[3][8] = {};
+    gdt_entry(GDT[0], 0, 0, 0);
+    gdt_entry(GDT[1], 0xffffffff, 0, 0x9A);
+    gdt_entry(GDT[2], 0xffffffff, 0, 0x92);
+
+    DISABLE_INTERRUPTS();
+
+    set_gdt();
+
+    ENABLE_INTERRUPTS();
 }

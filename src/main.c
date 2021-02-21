@@ -3,10 +3,6 @@
 #include "utils/utils.h"
 
 extern WRITER writer;
-extern int set_gdt(void);
-
-static void
-init_gdt(void);
 
 static void
 tests(void);
@@ -28,23 +24,6 @@ kernel_main(void)
 
     while (1);
 }
-
-
-static void
-init_gdt(void)
-{
-    uint8_t GDT[3][8] = {};
-    gdt_entry(GDT[0], 0, 0, 0);
-    gdt_entry(GDT[1], 0xffffffff, 0, 0x9A);
-    gdt_entry(GDT[2], 0xffffffff, 0, 0x92);
-
-    DISABLE_INTERRUPTS();
-
-    set_gdt();
-
-    ENABLE_INTERRUPTS();
-}
-
 
 static void
 tests(void)
