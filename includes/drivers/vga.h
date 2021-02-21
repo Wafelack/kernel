@@ -53,6 +53,6 @@ vga_writeln(WRITER* writer, const char *word);
 void
 clear_screen(WRITER *writer);
 
-#define PRINT(x) vga_write(&writer, x) // Todo: write a printf.
+#define kprint(x) vga_write(&writer, x) // Todo: write a printf.
 
 #endif

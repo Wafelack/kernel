@@ -5,41 +5,44 @@
 #define ENABLE_INTERRUPTS() asm volatile ("sti");
 #define DISABLE_INTERRUPTS() asm volatile ("cli");
 
-#define SET_COLOR(color) writer_setcolor(&writer, make_color(color, BLACK));
+#define SET_COLOR(color) writer_setcolor(&writer, make_color((color), BLACK));
 
 #define PANIC(comment) { \
     DISABLE_INTERRUPTS()\
-    PRINT("\n");\
+    kprint("\n");\
     SET_COLOR(LIGHT_GRAY);\
-    PRINT("Kernel panicked at " __FILE__ ":");\
+    kprint("Kernel panicked at " __FILE__ ":");\
     char buffer[7] = {0};\
     itoa(buffer, __LINE__);\
-    PRINT(buffer);\
-    PRINT(": " comment "\n");\
+    kprint(buffer);\
+    kprint(": ");\
+    kprint((comment));\
+    kprint("\n");\
     while (1);\
 }
 
-#define assert(expr, message) {\
-    if (!(expr))\
-        PANIC("Assertion failed: `" #expr "`: " message);\
+#define assert(expr) {\
+    if (!(expr)) {\
+        PANIC("Assertion failed: `" #expr "`");\
+    }\
 }
 
 
 #define OK(message) {\
-  PRINT("[");\
+  kprint("[");\
   SET_COLOR(GREEN);\
-  PRINT(" OK ");\
+  kprint(" OK ");\
   SET_COLOR(LIGHT_GRAY);\
-  PRINT("] ");\
-  PRINT(message);\
-  PRINT("\n");\
+  kprint("] ");\
+  kprint((#message));\
+  kprint("\n");\
 }
 
 
 #define SUCCESS_TEST(test_name) {\
-  PRINT("test::" test_name "... ");\
+  kprint("test::" test_name "... ");\
   SET_COLOR(GREEN);\
-  PRINT("ok\n");\
+  kprint("ok\n");\
   SET_COLOR(LIGHT_GRAY);\
 }
 
@@ -53,7 +56,7 @@ void
 itoa(char* buffer, int32_t number);
 
 void*
-memset(void* dest, int32_t ch, size_t count);
+memset(void* dest, uint16_t ch, size_t count);
 void*
 memcpy(void* dest, const void* src, size_t count);
 void*

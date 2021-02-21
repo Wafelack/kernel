@@ -3,6 +3,7 @@
 #include "utils/utils.h"
 
 extern WRITER writer;
+extern int set_gdt(void);
 
 static void
 init_gdt(void);
@@ -23,19 +24,11 @@ kernel_main(void)
 
     tests();
 
-    assert(1 != 1, "This assertion will fail !");
+    assert(1 != 1);
 
-    #if 0
-    for (uint8_t i = 0; i < 28; i++) {
-      char buffer[7] = {};
-      itoa(buffer, (int32_t)i);
-      PRINT(buffer);
-      PRINT("\n");
-    }
-    #endif
-    
     while (1);
 }
+
 
 static void
 init_gdt(void)
@@ -44,21 +37,28 @@ init_gdt(void)
     gdt_entry(GDT[0], 0, 0, 0);
     gdt_entry(GDT[1], 0xffffffff, 0, 0x9A);
     gdt_entry(GDT[2], 0xffffffff, 0, 0x92);
+
+    DISABLE_INTERRUPTS();
+
+    set_gdt();
+
+    ENABLE_INTERRUPTS();
 }
+
 
 static void
 tests(void)
 {
-    PRINT("\nRunning tests ...\n\n");
+    kprint("\nRunning tests ...\n\n");
 
     // Memmove
     char dest[2] = {2, 3};
     char src[2]  = {5, 7};
     memmove(dest, src, 2);
-    assert(dest[1] == 7 && dest[0] == 5, "Failed to move data.");
+    assert((dest[1] == 7 && dest[0] == 5));
 
     SUCCESS_TEST("memmove");
 
-    PRINT("\n"); 
+    kprint("\n"); 
     OK("Sucessfully passed all tests.");
 }

@@ -37,11 +37,11 @@ itoa(char *buffer, int32_t number)
 }
 
 void*
-memset(void* dest, int32_t ch, size_t count)
+memset(void* dest, uint16_t ch, size_t count)
 {
-    int8_t casted = (int8_t)ch;
+    uint16_t casted = (uint16_t)ch;
     for (size_t i = 0; i < count; i++) {
-        ((uint8_t*)dest)[i] = casted;
+        ((uint16_t*)dest)[i] = casted;
     }
     return dest;
 }
