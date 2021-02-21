@@ -11,18 +11,11 @@
     DISABLE_INTERRUPTS()\
     PRINT("\n");\
     SET_COLOR(LIGHT_GRAY);\
-    PRINT("Please keep kalm, don't ");\
-    SET_COLOR(RED);\
-    PRINT("PANIK !\n");\
-    SET_COLOR(LIGHT_GRAY);\
-    PRINT(__FILE__);\
-    PRINT(":");\
+    PRINT("Kernel panicked at " __FILE__ ":");\
     char buffer[7] = {0};\
     itoa(buffer, __LINE__);\
     PRINT(buffer);\
-    PRINT(": ");\
-    PRINT(comment);\
-    PRINT("\n");\
+    PRINT(": " comment "\n");\
     while (1);\
 }
 

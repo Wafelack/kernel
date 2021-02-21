@@ -23,15 +23,16 @@ kernel_main(void)
 
     tests();
 
+    assert(1 != 1, "This assertion will fail !");
+
     #if 0
-    for (uint8_t i = 0; i < 255; i++) {
+    for (uint8_t i = 0; i < 28; i++) {
       char buffer[7] = {};
       itoa(buffer, (int32_t)i);
       PRINT(buffer);
       PRINT("\n");
     }
     #endif
-
     
     while (1);
 }
@@ -57,11 +58,6 @@ tests(void)
     assert(dest[1] == 7 && dest[0] == 5, "Failed to move data.");
 
     SUCCESS_TEST("memmove");
-
-    // Failing test
-    assert(1 != 1, "This assertion should fail.");
-
-    SUCCESS_TEST("should_fail");
 
     PRINT("\n"); 
     OK("Sucessfully passed all tests.");

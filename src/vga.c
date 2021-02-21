@@ -29,10 +29,10 @@ writer_setcolor(WRITER* writer, uint8_t color)
 }
 
 static void
-scroll(WRITER *writer)
+scroll(WRITER *ptr)
 {
-  memmove(writer->buffer, writer->buffer + WIDTH, WIDTH * HEIGHT - WIDTH);
-  memset(writer->buffer + (WIDTH * HEIGHT - WIDTH), make_char(make_color(LIGHT_GRAY, BLACK), ' '), WIDTH);
+  memmove(ptr->buffer, ptr->buffer + WIDTH, WIDTH * HEIGHT - WIDTH); // Moves the buffer «one line up».
+  memset(ptr->buffer + (WIDTH * HEIGHT - WIDTH), make_char(ptr->color, ' '), WIDTH); // Fills the created blank line.
 }
 
 void
