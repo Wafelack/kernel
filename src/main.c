@@ -4,6 +4,8 @@
 
 extern WRITER writer;
 
+GDT_ENTRY entries[3] = {};
+
 static void
 tests(void);
 
@@ -14,13 +16,18 @@ kernel_main(void)
 
     OK("Initialized VGA buffer.");
 
-    init_gdt();
-
-    OK("Initialized Global Descriptor Table.");
+    init_gdt(entries);
 
     tests();
 
-    assert(1 != 1);
+    for (size_t i = 0; i < 1000000; i++)
+    {
+        char buffer[7] = {};
+        itoa(buffer, i);
+        kprint(buffer);
+        kprint("\n");
+    }
+    
 
     while (1);
 }

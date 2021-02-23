@@ -28,15 +28,17 @@ writer_setcolor(WRITER* writer, uint8_t color)
     writer->color = color;
 }
 
-#ifdef SCROLL
 static void
 scroll(WRITER *ptr)
 {
-    memmove(ptr->buffer, ptr->buffer + WIDTH, WIDTH * HEIGHT - WIDTH); // Moves the buffer «one line up».
-    memset(ptr->buffer, make_char(ptr->color, ' '), WIDTH); // Fills the created blank line.
+    uint16_t *new = (uint16_t*)BUFFER_ADDR;
+    for (size_t i = WIDTH; i < WIDTH * HEIGHT ; i ++)
+    {
+        new[i - WIDTH] = ptr->buffer[i];
+    }
+    ptr->buffer = new;
     ptr->row--;
 }
-#endif
 
 void
 vga_write(WRITER* writer, const char *word)
@@ -60,11 +62,7 @@ vga_write(WRITER* writer, const char *word)
         }
 
         if (writer->row >= HEIGHT) {
-            #ifdef SCROLL
                 scroll(writer);
-            #else
-                clear_screen(writer);
-            #endif
         }
         
 
