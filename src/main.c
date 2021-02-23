@@ -19,14 +19,6 @@ kernel_main(void)
     init_gdt(entries);
 
     tests();
-
-    for (size_t i = 0; i < 1000000; i++)
-    {
-        char buffer[7] = {};
-        itoa(buffer, i);
-        kprint(buffer);
-        kprint("\n");
-    }
     
 
     while (1);
