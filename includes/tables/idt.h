@@ -1,7 +1,7 @@
 #ifndef _IDT_H_
 #define _IDT_H_
 
-#include "utils.h"
+#include "utils/utils.h"
 
 typedef struct {
     uint16_t offset0;

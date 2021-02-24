@@ -36,6 +36,10 @@ scroll(WRITER *ptr)
     {
         new[i - WIDTH] = ptr->buffer[i];
     }
+    for (size_t i = WIDTH * HEIGHT - WIDTH; i < WIDTH * HEIGHT; i++)
+    {
+        new[i] = make_char(ptr->color, ' ');
+    }
     ptr->buffer = new;
     ptr->row--;
 }

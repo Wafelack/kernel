@@ -1,5 +1,6 @@
 #include "drivers/vga.h"
 #include "tables/gdt.h"
+#include "tables/idt.h"
 #include "utils/utils.h"
 
 extern WRITER writer;

@@ -34,7 +34,7 @@
   kprint(" OK ");\
   SET_COLOR(LIGHT_GRAY);\
   kprint("] ");\
-  kprint((#message));\
+  kprint((message));\
   kprint("\n");\
 }
 
