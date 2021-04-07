@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "vga.h": "c",
-        "gdt.h": "c",
-        "includes.h": "c",
-        "system_error": "cpp"
-    }
-}
