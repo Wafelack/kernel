@@ -1,5 +1,4 @@
-use crate::{info, ok};
-use core::{fmt::Write, mem::size_of};
+use core::mem::size_of;
 
 #[repr(packed)]
 pub struct Desc {
@@ -45,7 +44,6 @@ static mut GDT: [Seg; ENTRIES] = [Seg::new(); ENTRIES];
 static mut PTR: Desc = Desc { size: 0, addr: 0 };
 
 pub unsafe fn gdt() {
-    info!("Initializing GDT...");
     GDT[1] = Seg::with_flag(0b10011010, CODE_GRAN); // Kernel code
     GDT[2] = Seg::with_flag(0b10010010, 0); // Kernel data
     GDT[3] = Seg::with_flag(0b11111010, CODE_GRAN); // User code
@@ -54,7 +52,5 @@ pub unsafe fn gdt() {
         size: (size_of::<[Seg; ENTRIES]>() - 1) as u16,
         addr: (&GDT as *const _) as u64,
     };
-    info!("Installing GDT...");
     install_gdt(&PTR as *const _);
-    ok!("GDT initialized and installed.");
 }

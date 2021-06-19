@@ -1,4 +1,4 @@
-pub use crate::{err, info, ok};
+pub use crate::{err, info};
 use core::{fmt::Write, mem::size_of};
 
 #[repr(packed)]
@@ -63,7 +63,6 @@ static mut TABLE: IDTTable = IDTTable { size: 0, addr: 0 };
 static mut ENT: [Entry; ENTRIES] = [Entry::new(); ENTRIES];
 
 pub unsafe fn idt() {
-    info!("Disabling interupts...");
     asm!("cli");
 
     TABLE = IDTTable {
@@ -72,8 +71,6 @@ pub unsafe fn idt() {
     };
 
     use interrupts::*;
-
-    info!("Initialzing IDT...");
 
     ENT[0] = Entry::from(dbz as u64, IType::TRAP32 as u8);
     ENT[1] = Entry::from(ssi as u64, IType::TRAP32 as u8);
@@ -97,15 +94,11 @@ pub unsafe fn idt() {
     ENT[19] = Entry::from(simd as u64, IType::TRAP32 as u8);
     ENT[20] = Entry::from(virtu as u64, IType::TRAP32 as u8);
 
-    info!("Loading IDT ...");
     asm!("lidt [rdi]", in("rdi")(&ENT as *const _));
     asm!("sti");
-    info!("Enabling interrupts...");
-    ok!("IDT initialized and installed.");
 }
 
 mod interrupts {
-    
     use super::{err, info, Write};
 
     pub extern "x86-interrupt" fn dbz() {

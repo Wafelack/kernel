@@ -1,7 +1,7 @@
 TARGET := build/kernel.img
 FILES := $(shell find src/ -type f)
 
-$(TARGET): $(FILES) void
+$(TARGET): $(FILES) clean
 	cargo xbuild
 	dd if=/dev/zero bs=1M count=0 seek=64 of=$(TARGET)
 	parted -s $(TARGET) mklabel msdos
@@ -20,5 +20,4 @@ run: $(TARGET)
 clean:
 	@cargo clean
 	@rm build/* -f
-void:
 .PHONY: clean
