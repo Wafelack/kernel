@@ -1,8 +1,8 @@
 TARGET := build/kernel.img
+FILES := $(shell find src/ -type f)
 
-all:
+$(TARGET): $(FILES)
 	cargo xbuild
-limine:
 	dd if=/dev/zero bs=1M count=0 seek=64 of=$(TARGET)
 	parted -s $(TARGET) mklabel msdos
 	parted -s $(TARGET) mkpart primary 1 100%
@@ -13,6 +13,12 @@ limine:
 	echfs-utils -m -p0 $(TARGET) import limine.cfg limine.cfg
 	echfs-utils -m -p0 $(TARGET) import target/x86_64/debug/kernel kernel.elf
 
-	./limine/limine-install-linux-x86_64 build/kernel.img
-run:
-	qemu-system-x86_64 --enable-kvm build/kernel.img -serial stdio -no-reboot
+	./limine/limine-install-linux-x86_64 $(TARGET)
+	chmod 666 $(TARGET)
+run: $(TARGET)
+	@qemu-system-x86_64 --enable-kvm -serial stdio -no-reboot -drive file=$(TARGET),format=raw
+bclean:
+	cargo clean
+clean:
+	rm build/* -f
+.PHONY: clean bclean
