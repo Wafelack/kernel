@@ -1,6 +1,7 @@
 TARGET := build/kernel.img
 FILES := $(shell find src/ -type f)
 
+build: $(TARGET) void
 $(TARGET): $(FILES)
 	cargo xbuild
 	dd if=/dev/zero bs=1M count=0 seek=64 of=$(TARGET)
@@ -17,8 +18,8 @@ $(TARGET): $(FILES)
 	chmod 666 $(TARGET)
 run: $(TARGET)
 	@qemu-system-x86_64 --enable-kvm -serial stdio -no-reboot -drive file=$(TARGET),format=raw
-bclean:
-	cargo clean
 clean:
-	rm build/* -f
-.PHONY: clean bclean
+	@cargo clean
+	@rm build/* -f
+void:
+.PHONY: clean

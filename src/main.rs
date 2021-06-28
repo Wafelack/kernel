@@ -4,10 +4,12 @@
 
 mod serial;
 mod log;
+mod gdt;
 
 use core::{panic::PanicInfo, fmt::Write};
 use serial::Serial;
 use stivale::StivaleHeader;
+use gdt::gdt;
 
 static STACK: [u8; 4096] = [0; 4096];
 
@@ -19,7 +21,10 @@ pub static mut SERIAL: Serial = Serial::new();
 
 #[no_mangle]
 extern "C" fn k_main(_hdr_addr: usize) -> ! {
-    log!("Booting from limine...");
+    info!("Booting from limine...");
+    info!("Loading GDT...");
+    unsafe { gdt() };
+    ok!("Successfully loaded GDT.");
     todo!();
 }
 
