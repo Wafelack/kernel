@@ -24,7 +24,6 @@ impl fmt::Write for Serial {
         Ok(())
     }
 }
-
 #[macro_export]
 macro_rules! serial {
     ($($arg:tt)*) => {

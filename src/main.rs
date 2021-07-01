@@ -22,9 +22,9 @@ pub static mut SERIAL: Serial = Serial::new();
 #[no_mangle]
 extern "C" fn k_main(_hdr_addr: usize) -> ! {
     info!("Booting from limine...");
-    info!("Loading GDT...");
+    info!("Installing GDT...");
     unsafe { gdt() };
-    ok!("Successfully loaded GDT.");
+    ok!("Loaded GDT.");
     todo!();
 }
 
@@ -34,7 +34,7 @@ fn panic(info: &PanicInfo) -> ! {
     // the message is printed directly.
     if let Some(l) = info.location() {
         if let Some(m) = info.message() {
-            serial!("\x1b[1;31m{}:{}\x1b[0m Kernel panicked at: `", l.file(), l.line());
+            serial!("\x1b[1;31merror\x1b[0m: {}:{}: Kernel panicked at: `", l.file(), l.line());
             unsafe {
                 SERIAL.write_fmt(*m).unwrap();
             }
