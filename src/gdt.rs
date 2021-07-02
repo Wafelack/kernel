@@ -5,13 +5,12 @@ pub struct Desc {
     size: u16,
     addr: u64,
 }
-
 #[repr(packed)]
 #[derive(Copy, Clone)]
 pub struct Seg {
     lim_low: u16,
     bas_low: u16,
-    bas_mid: u16,
+    bas_mid: u8,
     flag: u8,
     lim_high_gran: u8, // gran << 4 | lim_high
     bas_high: u8,
@@ -34,7 +33,6 @@ impl Seg {
         return seg;
     }
 }
-
 #[link(name = "x86_64_arch")]
 extern "C" {
        fn install_gdt(desc: *const Desc);
