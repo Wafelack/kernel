@@ -1,15 +1,17 @@
 #![no_std]
 #![no_main]
-#![feature(asm, panic_info_message)]
+#![feature(asm, panic_info_message, abi_x86_interrupt)]
 
-mod serial;
-mod log;
 mod gdt;
+mod idt;
+mod log;
+mod serial;
 
-use core::{panic::PanicInfo, fmt::Write};
+use core::{fmt::Write, panic::PanicInfo};
+use gdt::gdt;
+use idt::idt;
 use serial::Serial;
 use stivale::StivaleHeader;
-use gdt::gdt;
 
 static STACK: [u8; 4096] = [0; 4096];
 
@@ -17,14 +19,15 @@ static STACK: [u8; 4096] = [0; 4096];
 #[no_mangle]
 #[used]
 static STIVALE_HDR: StivaleHeader = StivaleHeader::new(&STACK[4095] as *const u8);
-pub static mut SERIAL: Serial = Serial::new();
+pub static mut SERIAL: Serial = Serial::COM1;
 
 #[no_mangle]
+#[allow(unconditional_panic)]
 extern "C" fn k_main(_hdr_addr: usize) -> ! {
     info!("Booting from limine...");
-    info!("Installing GDT...");
     unsafe { gdt() };
-    ok!("Loaded GDT.");
+    unsafe { idt() };
+    serialn!("Division by zero result: {}.", 7 / 0);
     todo!();
 }
 
@@ -34,14 +37,14 @@ fn panic(info: &PanicInfo) -> ! {
     // the message is printed directly.
     if let Some(l) = info.location() {
         if let Some(m) = info.message() {
-            serial!("\x1b[1;31merror\x1b[0m: {}:{}: Kernel panicked at: `", l.file(), l.line());
+            serial!("Kernel panic - {}:{} - ", l.file(), l.line());
             unsafe {
-                SERIAL.write_fmt(*m).unwrap();
+                SERIAL.write_fmt(*m);
             }
-            serialn!("`.");
-            loop {  }
+            serialn!("");
+            loop {}
         }
     }
     serialn!("Kernel {}", info);
-    loop {  }
+    loop {}
 }

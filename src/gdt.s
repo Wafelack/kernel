@@ -1,26 +1,26 @@
 global install_gdt
 install_gdt:
-lgdt [rdi]
-push rbp
-mov rbp, rsp ;; save stack
+  lgdt [rdi]
+  push rbp
+  mov rbp, rsp ;; save stack
 
-push qword 16 ;; kernel data
-push rbp ;; save stack
-pushf ;; flags
-push qword 8 ;; kernel code
-push .trampoline ;; return point
+  push qword 16 ;; kernel data
+  push rbp ;; save stack
+  pushf ;; flags
+  push qword 8 ;; kernel code
+  push .trampoline ;; return point
 
-iretq ;; interrupt return
+  iretq ;; interrupt return
 .trampoline
-pop rbp
+  pop rbp
 
-;; All point to data segment
-mov ax, 16
-mov ds, ax
-mov es, ax
-mov fs, ax
-mov gs, ax
-mov ss, ax
+  ;; All point to data segment
+  mov ax, 16
+  mov ds, ax
+  mov es, ax
+  mov fs, ax
+  mov gs, ax
+  mov ss, ax
 
-mov ax, 40
-ret
+  mov ax, 40
+  ret
