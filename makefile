@@ -1,7 +1,7 @@
 TARGET := build/kernel.img
 FILES := $(shell find src/ -type f)
 
-$(TARGET): $(FILES) clean
+$(TARGET): $(FILES)
 	cargo xbuild
 	dd if=/dev/zero bs=1M count=0 seek=64 of=$(TARGET)
 	parted -s $(TARGET) mklabel msdos
@@ -15,9 +15,9 @@ $(TARGET): $(FILES) clean
 
 	./limine/limine-install-linux-x86_64 $(TARGET)
 	chmod 666 $(TARGET)
-run: $(TARGET)
+run: clean $(TARGET)
 	@qemu-system-x86_64 --enable-kvm -serial stdio -no-reboot -drive file=$(TARGET),format=raw
 clean:
-	@cargo clean
-	@rm build/* -f
+	cargo clean
+	rm build/* -f
 .PHONY: clean

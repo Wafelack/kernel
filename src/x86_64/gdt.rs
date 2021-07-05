@@ -1,10 +1,11 @@
 use core::mem::size_of;
 
-#[repr(packed)]
+#[repr(packed, C)]
 pub struct Desc {
     size: u16,
     addr: u64,
 }
+#[allow(dead_code)]
 #[repr(packed)]
 #[derive(Copy, Clone)]
 pub struct Seg {

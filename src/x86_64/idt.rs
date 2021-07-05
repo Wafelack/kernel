@@ -1,11 +1,14 @@
 pub use crate::{err, info};
-use core::{fmt::Write, mem::size_of};
+use core::mem::size_of;
 
+#[allow(dead_code)]
 #[repr(packed)]
 pub struct IDTTable {
     size: u16,
     addr: u64,
 }
+
+#[allow(dead_code)]
 #[repr(packed)]
 #[derive(Copy, Clone)]
 pub struct Entry {
@@ -41,6 +44,8 @@ impl Entry {
         }
     }
 }
+
+#[allow(dead_code)]
 #[repr(u8)]
 pub enum IType {
     TRAP16 = 0b0111,
@@ -72,26 +77,26 @@ pub unsafe fn idt() {
 
     use interrupts::*;
 
-    ENT[0] = Entry::from(dbz as u64, IType::TRAP32 as u8);
-    ENT[1] = Entry::from(ssi as u64, IType::TRAP32 as u8);
-    ENT[2] = Entry::from(nmi as u64, IType::TRAP32 as u8);
-    ENT[3] = Entry::from(brk as u64, IType::TRAP32 as u8);
-    ENT[4] = Entry::from(overflow as u64, IType::TRAP32 as u8);
-    ENT[5] = Entry::from(bre as u64, IType::TRAP32 as u8);
-    ENT[6] = Entry::from(invalid as u64, IType::TRAP32 as u8);
-    ENT[7] = Entry::from(coprocessor_not_available as u64, IType::TRAP32 as u8);
-    ENT[8] = Entry::from(double_fault as u64, IType::TRAP32 as u8);
-    ENT[9] = Entry::from(coproc as u64, IType::TRAP32 as u8);
-    ENT[10] = Entry::from(tss as u64, IType::TRAP32 as u8);
-    ENT[11] = Entry::from(not_present as u64, IType::TRAP32 as u8);
-    ENT[12] = Entry::from(stack_seg_fault as u64, IType::TRAP32 as u8);
-    ENT[13] = Entry::from(gpf as u64, IType::TRAP32 as u8);
-    ENT[14] = Entry::from(page_fault as u64, IType::TRAP32 as u8);
-    ENT[15] = Entry::from(reserved as u64, IType::TRAP32 as u8);
-    ENT[16] = Entry::from(fpe as u64, IType::TRAP32 as u8);
-    ENT[17] = Entry::from(align_check as u64, IType::TRAP32 as u8);
-    ENT[18] = Entry::from(machine_check as u64, IType::TRAP32 as u8);
-    ENT[19] = Entry::from(simd as u64, IType::TRAP32 as u8);
+    ENT[0] = Entry::from(dbz as u64, make_attr(IType::TRAP32));
+    ENT[1] = Entry::from(ssi as u64, make_attr(IType::TRAP32));
+    ENT[2] = Entry::from(nmi as u64, make_attr(IType::TRAP32));
+    ENT[3] = Entry::from(brk as u64,make_attr(IType::TRAP32));
+    ENT[4] = Entry::from(overflow as u64,make_attr(IType::TRAP32));
+    ENT[5] = Entry::from(bre as u64, make_attr(IType::TRAP32));
+    ENT[6] = Entry::from(invalid as u64,make_attr(IType::TRAP32));
+    ENT[7] = Entry::from(coprocessor_not_available as u64, make_attr(IType::TRAP32));
+    ENT[8] = Entry::from(double_fault as u64,make_attr(IType::TRAP32));
+    ENT[9] = Entry::from(coproc as u64,make_attr(IType::TRAP32));
+    ENT[10] = Entry::from(tss as u64,make_attr(IType::TRAP32));
+    ENT[11] = Entry::from(not_present as u64,make_attr(IType::TRAP32));
+    ENT[12] = Entry::from(stack_seg_fault as u64, make_attr(IType::TRAP32));
+    ENT[13] = Entry::from(gpf as u64, make_attr(IType::TRAP32));
+    ENT[14] = Entry::from(page_fault as u64,make_attr(IType::TRAP32));
+    ENT[15] = Entry::from(reserved as u64,make_attr(IType::TRAP32));
+    ENT[16] = Entry::from(fpe as u64,make_attr(IType::TRAP32));
+    ENT[17] = Entry::from(align_check as u64,make_attr(IType::TRAP32));
+    ENT[18] = Entry::from(machine_check as u64,make_attr(IType::TRAP32));
+    ENT[19] = Entry::from(simd as u64,make_attr(IType::TRAP32));
     ENT[20] = Entry::from(virtu as u64, IType::TRAP32 as u8);
 
     asm!("lidt [rdi]", in("rdi")(&ENT as *const _));
@@ -99,7 +104,7 @@ pub unsafe fn idt() {
 }
 
 mod interrupts {
-    use super::{err, info, Write};
+    use super::{err, info};
 
     pub extern "x86-interrupt" fn dbz() {
         err!("Attempted to divide by zero.");

@@ -6,7 +6,7 @@ fn panic(info: &PanicInfo) -> ! {
     if let (Some(l), Some(m)) = (info.location(), info.message()) {
         serial!("Kernel panic - {}:{} - ", l.file(), l.line());
         unsafe {
-            SERIAL.write_fmt(*m);
+            SERIAL.write_fmt(*m).unwrap();
         }
         serialn!("");
     } else {

@@ -10,7 +10,16 @@ pub enum Serial {
 }
 impl Serial {
     pub unsafe fn write_byte(&self, byte: u8) {
+        while !self.available() {  }
         asm!("out dx, al", in("dx") *self as u16, in("al") byte);
+    }
+    pub fn available(&self) -> bool {
+        let port = *self as u16 + 5;
+        let mut val: u8 = 0;
+        unsafe {
+            asm!("in al, dx", in("dx")port, out("al")val)
+        };
+        val & 0x20 != 0
     }
 }
 
@@ -26,7 +35,7 @@ impl fmt::Write for Serial {
 macro_rules! serial {
     ($($arg:tt)*) => {
         unsafe {
-            // Errors are not possible
+            use core::fmt::Write;
             write!($crate::SERIAL, $($arg)*).unwrap();
         }
     }

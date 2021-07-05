@@ -2,7 +2,6 @@ mod gdt;
 mod idt;
 
 use crate::{info, ok};
-use core::fmt::Write;
 
 pub fn init_arch() {
     info!("Installing GDT...");
@@ -15,8 +14,9 @@ pub fn init_arch() {
         idt::idt();
     }
     ok!("Loaded IDT.");
-    ok!(
+    /* ok!(
         "Arch {} initialized.",
         module_path!().split("::").last().unwrap()
-    );
+    ); */
+    info!("jsp");
 }

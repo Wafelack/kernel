@@ -19,7 +19,7 @@ name = "kernel"
 version = "0.1.0"
 dependencies = [
  "nasm-rs",
- "stivale",
+ "stivale-boot",
 ]
 
 [[package]]
@@ -32,9 +32,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "stivale"
+name = "stivale-boot"
 version = "0.2.1"
-source = "git+https://github.com/Andy-Python-Programmer/stivale#62b05bb7a1924001f647cfaa5893efa4f12d2e5b"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f6338b6417a0e109faec315306ff0076bcfc5f239e099043c6ee734332a804d3"
 dependencies = [
  "bitflags",
 ]

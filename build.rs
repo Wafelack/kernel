@@ -3,5 +3,5 @@ fn main() {
         .target("x86_64-none-none")
         .file("src/x86_64/gdt.s")
         .compile("x86_64_arch")
-        .expect("Failed to compile x86_64 ASM.");
+        .expect("Failed to compile x86_64 ASM");
 }
