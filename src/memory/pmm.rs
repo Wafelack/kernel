@@ -39,23 +39,32 @@ impl Bitmap {
         (unsafe { *self.get_byte(byte)  } & (1 << bit)) != 0
     }
     pub fn find_free_pages(&self, count: u64) -> Option<u64> {
-        let mut free_count = 0u64;
-        for i in unsafe { LAST_FREE }..(unsafe { MEM_SIZE }/PAGE_SIZE) {
+        let (mut free_count, mut i) = (unsafe { LAST_FREE }, 0);
+        let page_count = unsafe { MEM_SIZE } / PAGE_SIZE;
+
+        while i < page_count {
+            while unsafe { *self.get_byte(i as usize / 8) == 0xFF } && i < page_count-8 {
+                free_count = 0;
+                i += 8 - (i % 8);
+            }
+
             if !self.is_set(i) {
                 free_count += 1;
                 if free_count == count {
-                    unsafe { LAST_FREE = i };
                     return Some(i);
                 }
             } else {
                 free_count = 0;
             }
+
+            if i == page_count - 1 {
+                unsafe { LAST_FREE = 0};
+                return self.find_free_pages(count);
+            }
+
+            i += 1;
         }
-        if (unsafe { LAST_FREE } != 0) {
-            unsafe { LAST_FREE = 0 };
-            return self.find_free_pages(count);
-        }
-        err!("The kernel is out of memory.");
+        err!("Kernel is out of memory.");
         return None;
     }
 }
