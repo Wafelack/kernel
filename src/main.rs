@@ -8,7 +8,7 @@ mod panic;
 mod serial;
 mod x86_64;
 
-use memory::{pmm::init_pmm, MemEntry, ENTRIES_COUNT};
+use memory::{pmm::{init_pmm, alloc_page, free_page}, MemEntry, ENTRIES_COUNT};
 use serial::Serial;
 use stivale_boot::v2::{StivaleHeader, StivaleStruct};
 
@@ -34,6 +34,15 @@ extern "C" fn k_main(stivale_struct: &'static StivaleStruct) -> ! {
                   .enumerate()
                   .for_each(|(idx, e)| unsafe { MEMORY_MAP[idx] = MemEntry::from_stivale_mem(*e) });
     init_pmm(unsafe { MEMORY_MAP });
+
+    let page = alloc_page(1);
+    if let Some(idx) = page {
+        ok!("Successfully allocated a page at {:#08x}.", idx);
+        free_page (idx, 1);
+        assert_eq!(Some(idx), alloc_page(1));
+        ok!("Successfully freed page at {:#08x}", idx);
+        free_page (idx, 1);
+    }
     
     todo!();
 }

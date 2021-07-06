@@ -1,5 +1,5 @@
 use super::{MemEType, MemEntry, ENTRIES_COUNT, PAGE_SIZE};
-use crate::{info, ok};
+use crate::{info, ok, err};
 use core::ptr::{self, null_mut};
 
 #[derive(Debug)]
@@ -7,6 +7,7 @@ pub struct Bitmap {
     size: u64,
     start: *mut u8,
 }
+static mut LAST_FREE: u64 = 0;
 impl Bitmap {
     pub const fn new() -> Self {
         Self {
@@ -15,6 +16,7 @@ impl Bitmap {
         }
     }
     fn get_byte(&self, idx: usize) -> *mut u8 {
+        assert!(idx < self.size as usize);
         (self.start as usize + idx) as *mut u8
     }
     pub fn set_bit(&mut self, addr: u64) {
@@ -31,6 +33,31 @@ impl Bitmap {
             *self.get_byte(byte) &= !(1 << bit);
         }
     }
+    pub fn is_set(&self, addr: u64) -> bool {
+        let bit = get_bm_bit_idx(addr);
+        let byte = get_bm_array_idx(addr);
+        (unsafe { *self.get_byte(byte)  } & (1 << bit)) != 0
+    }
+    pub fn find_free_pages(&self, count: u64) -> Option<u64> {
+        let mut free_count = 0u64;
+        for i in unsafe { LAST_FREE }..(unsafe { MEM_SIZE }/PAGE_SIZE) {
+            if !self.is_set(i) {
+                free_count += 1;
+                if free_count == count {
+                    unsafe { LAST_FREE = i };
+                    return Some(i);
+                }
+            } else {
+                free_count = 0;
+            }
+        }
+        if (unsafe { LAST_FREE } != 0) {
+            unsafe { LAST_FREE = 0 };
+            return self.find_free_pages(count);
+        }
+        err!("The kernel is out of memory.");
+        return None;
+    }
 }
 
 fn get_bm_array_idx(addr: u64) -> usize {
@@ -41,11 +68,13 @@ fn get_bm_bit_idx(addr: u64) -> usize {
 }
 
 static mut BITMAP: Bitmap = Bitmap::new();
+static mut MEM_SIZE: u64 = 0;
 
 pub fn init_pmm(memory_map: [MemEntry; ENTRIES_COUNT]) {
     let mut bm_start: *mut u8 = null_mut();
     let mut available = 0;
-    let mem_size = memory_map.iter().fold(0, |size, entry| size + entry.size);
+    unsafe { MEM_SIZE = memory_map.iter().fold(0, |size, entry| size + entry.size) };
+    let mem_size = unsafe { MEM_SIZE };
     let free = memory_map.iter().filter(|e| e.etype == MemEType::Usable);
 
     // Find a place for the bitmap pointer
@@ -54,11 +83,17 @@ pub fn init_pmm(memory_map: [MemEntry; ENTRIES_COUNT]) {
             bm_start = e.start as *mut u8;
         }
         info!(
-            "Usable entry: {{ start: {:#016x}, size: {} }}",
+            "Usable entry: {{ start: {:#08x}, size: {} }}",
             e.start, e.size
         );
     });
     let bm_size = mem_size / (PAGE_SIZE * 8);
+    unsafe {
+        BITMAP = Bitmap {
+            size: bm_size,
+            start: bm_start,
+        };
+    }
 
     // Set all entries to used
     unsafe {
@@ -86,15 +121,29 @@ pub fn init_pmm(memory_map: [MemEntry; ENTRIES_COUNT]) {
         mem_size,
         available / PAGE_SIZE
     );
-    unsafe {
-        BITMAP = Bitmap {
-            size: bm_size,
-            start: bm_start,
-        };
-    }
+    
     ok!(
         "Bitmap stored at {:#08x} ({} bytes long).",
         BITMAP.start as usize,
         BITMAP.size
     );
+}
+
+pub fn alloc_page(count: u64) -> Option<u64> {
+    if let Some(page) = unsafe { BITMAP.find_free_pages(count)  }{
+        for i in page..count+page {
+            unsafe { BITMAP.set_bit(i) };
+        }
+        Some (page * PAGE_SIZE)
+    } else {
+        None
+    }
+}
+pub fn free_page(addr: u64, count: u64) {
+    let target = addr / PAGE_SIZE;
+    
+    for i in target..target+count {
+        unsafe { BITMAP.clear_bit(i) };
+    }
+    unsafe { LAST_FREE = target };
 }
