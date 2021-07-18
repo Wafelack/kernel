@@ -28,6 +28,9 @@ pub static mut MEMORY_MAP: [MemEntry; ENTRIES_COUNT] = [MemEntry::default(); ENT
 extern "C" fn k_main(stivale_struct: &'static StivaleStruct) -> ! {
     info!("Booting from limine...");
     x86_64::init_arch();
+
+    unsafe { asm!("int 0x0") };
+
     stivale_struct.memory_map()
                   .expect("Memory map is unavailable")
                   .iter()
@@ -43,6 +46,5 @@ extern "C" fn k_main(stivale_struct: &'static StivaleStruct) -> ! {
         ok!("Successfully freed page at {:#08x}", idx);
         free_page (idx, 1);
     }
-    
     todo!();
 }

@@ -14,7 +14,8 @@ fn panic(info: &PanicInfo) -> ! {
     }
     unsafe {
         asm!("cli"); // Clear interrupts
-        asm!("hlt"); // Halt gracefully
     }
-    loop {}
+    loop {
+        unsafe { asm!("hlt") };
+    }
 }
