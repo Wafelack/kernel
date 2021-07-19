@@ -25,6 +25,7 @@ pub static mut SERIAL: Serial = Serial::COM1;
 pub static mut MEMORY_MAP: [MemEntry; ENTRIES_COUNT] = [MemEntry::default(); ENTRIES_COUNT];
 
 #[no_mangle]
+#[allow(unconditional_panic)]
 extern "C" fn k_main(stivale_struct: &'static StivaleStruct) -> ! {
     info!("Booting from limine...");
     x86_64::init_arch();

@@ -99,7 +99,7 @@ pub unsafe fn idt() {
     ENT[19] = Entry::from(simd as u64,make_attr(IType::TRAP32));
     ENT[20] = Entry::from(virtu as u64, IType::TRAP32 as u8);
 
-    asm!("lidt [rdi]", in("rdi")(&ENT as *const _));
+    asm!("lidt [rdi]", in("rdi")(&TABLE as *const _));
     asm!("sti");
 }
 

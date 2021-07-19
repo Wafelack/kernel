@@ -14,9 +14,8 @@ pub fn init_arch() {
         idt::idt();
     }
     ok!("Loaded IDT.");
-    /* ok!(
+    ok!(
         "Arch {} initialized.",
         module_path!().split("::").last().unwrap()
-    ); */
-    info!("jsp");
+    );
 }
