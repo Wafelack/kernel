@@ -1,6 +1,7 @@
 use super::{MemEType, MemEntry, ENTRIES_COUNT, PAGE_SIZE};
-use crate::{info, ok, err};
+use crate::{info, ok, err, MEMORY_MAP};
 use core::ptr::{self, null_mut};
+use stivale_boot::v2::StivaleStruct;
 
 #[derive(Debug)]
 pub struct Bitmap {
@@ -78,6 +79,15 @@ fn get_bm_bit_idx(addr: u64) -> usize {
 
 static mut BITMAP: Bitmap = Bitmap::new();
 static mut MEM_SIZE: u64 = 0;
+
+pub fn init_memory_map(stivale_struct: &'static StivaleStruct) {
+    stivale_struct.memory_map()
+        .expect("Memory map is unavailable")
+        .iter()
+        .enumerate()
+        .for_each(|(idx, e)| unsafe { MEMORY_MAP[idx] = MemEntry::from_stivale_mem(*e) });
+
+}
 
 pub fn init_pmm(memory_map: [MemEntry; ENTRIES_COUNT]) {
     let mut bm_start: *mut u8 = null_mut();

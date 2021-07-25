@@ -4,7 +4,7 @@ use core::{fmt::Write, panic::PanicInfo};
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     if let (Some(l), Some(m)) = (info.location(), info.message()) {
-        serial!("Kernel panic - {}:{} - ", l.file(), l.line());
+        serial!("\x1b[0;31merror: \x1b[0;34m{}.{}:\x1b[0m Kernel panicked: ", l.file(), l.line());
         unsafe {
             SERIAL.write_fmt(*m).unwrap();
         }
