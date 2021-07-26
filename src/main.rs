@@ -21,12 +21,12 @@ static STACK: [u8; STACK_SIZE] = [0; STACK_SIZE];
 #[used]
 static STIVALE_HDR: StivaleHeader = StivaleHeader::new()
     .stack(&STACK[STACK_SIZE - 1] as *const u8)
-    .entry_point(k_main);
+    .entry_point(_start);
 pub static mut SERIAL: Serial = Serial::COM1;
 pub static mut MEMORY_MAP: [MemEntry; ENTRIES_COUNT] = [MemEntry::default(); ENTRIES_COUNT];
 
 #[no_mangle]
-extern "C" fn k_main(stivale_struct: &'static StivaleStruct) -> ! {
+extern "C" fn _start(stivale_struct: &'static StivaleStruct) -> ! {
     info!("Booting from limine...");
     x86_64::init_arch();
     

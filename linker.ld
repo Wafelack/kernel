@@ -1,4 +1,4 @@
-ENTRY(k_main)
+ENTRY(_start)
 
 SECTIONS
 {

@@ -1,5 +1,13 @@
 TARGET := build/kernel.img
 FILES := $(shell find src/ -type f)
+MEMORY ?= 256M
+QEMU_FLAGS :=                      	 \
+	--enable-kvm                     \
+	-serial mon:stdio                \
+	-no-reboot                       \
+	-nographic                       \
+	-drive file=$(TARGET),format=raw \
+	-m $(MEMORY)
 
 $(TARGET): $(FILES)
 	cargo xbuild
@@ -16,7 +24,7 @@ $(TARGET): $(FILES)
 	./limine/limine-install-linux-x86_64 $(TARGET)
 	chmod 666 $(TARGET)
 run: clean $(TARGET)
-	@qemu-system-x86_64 --enable-kvm -serial stdio -no-reboot -drive file=$(TARGET),format=raw
+	@qemu-system-x86_64 $(QEMU_FLAGS)
 clean:
 	cargo clean
 	rm build/* -f
